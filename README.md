@@ -10,7 +10,9 @@
 
 ## Product Listings
 
-- [ ] **Create Listings**: Users can upload items for sale with descriptions, images, prices, and categories. + [ ] **Edit/Delete Listings**: Sellers can modify or remove their listings.
+- [ ] **Create Listings**: Users can upload items for sale with descriptions, images, prices, and categories.
+
+* [ ] **Edit/Delete Listings**: Sellers can modify or remove their listings.
 
 ## Search and Filter
 
