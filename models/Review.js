@@ -9,4 +9,8 @@ const ReviewModel = mongoose.Schema({
     type: mongoose.Types.ObjectId,
     ref: "Buyer",
   },
+  review: {
+    type: String,
+    required: true,
+  },
 });

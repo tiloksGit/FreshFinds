@@ -14,11 +14,11 @@ const ProductsModel = mongoose.Schema({
     type: String,
     required: true,
   },
-  Condition: {
+  condition: {
     type: String,
   },
   isListed: {
-    type: bool,
+    type: Boolean,
     default: true,
   },
   price: {
@@ -26,3 +26,5 @@ const ProductsModel = mongoose.Schema({
     required: true,
   },
 });
+
+module.exports = mongoose.model("Products", ProductsModel);

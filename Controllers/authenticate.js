@@ -19,7 +19,7 @@ const authenticateUser = async (req, res) => {
         .json({ messaged: "Unauthorized: authentication failed" });
     }
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET_KEY, {
-      expiresIn: "1hr",
+      expiresIn: "30min",
     });
     res
       .status(200)
