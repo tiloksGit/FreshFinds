@@ -18,7 +18,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/v0", require("./Routes/registerRoute"));
-
+app.use("/api/v0/authenticate", require("./Routes/authenticateRoute"));
+app.use("/api/v0/protected", require("./Routes/protectedRoute"));
 mongoose.connection.once("open", () => {
   console.log("Connected to mongoDB");
   app.listen(3000, () => {

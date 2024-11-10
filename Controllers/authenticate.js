@@ -1,15 +1,33 @@
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 const authenticateUser = async (req, res) => {
   try {
     const { username, password } = req.body;
-    const user = User.findOne({ username });
+    const user = await User.findOne({ email: username });
     if (!user) {
       return res
         .status(401)
         .json({ success: false, message: "authentication failed" });
     }
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET_KEY);
-  } catch (err) {}
+
+    pwdMatch = await bcrypt.compare(password, user.password);
+    if (!pwdMatch) {
+      return res
+        .status(401)
+        .json({ messaged: "Unauthorized: authentication failed" });
+    }
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET_KEY, {
+      expiresIn: "1hr",
+    });
+    res
+      .status(200)
+      .json({ accessToken: token, message: "user succesfully logged in" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: " Server Error" });
+  }
 };
+
+module.exports = { authenticateUser };

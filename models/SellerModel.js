@@ -1,8 +1,7 @@
 const mongoose = require("mongoose");
-// const User = require("./userModel")
 
 const SellerModel = mongoose.Schema({
-  sellerId: {
+  seller_id: {
     type: mongoose.Types.ObjectId,
     ref: "Users",
   },
@@ -10,7 +9,7 @@ const SellerModel = mongoose.Schema({
     type: Number,
     default: 0,
   },
-  Address: {
+  address: {
     type: String,
     required: true,
   },

@@ -10,11 +10,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  Name: {
+  name: {
     type: String,
     required: true,
   },
-  Phone: {
+  phone: {
     type: Number,
     required: true,
   },
