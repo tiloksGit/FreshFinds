@@ -3,8 +3,16 @@ const Seller = require("../models/SellerModel");
 
 //Buyer Controls
 const addItem = async (req, res) => {
-  const { seller_id, item_name, description, condition, price } = req.body;
-  if (!seller_id || !item_name || !description || !condition || !price) {
+  const { seller_id, item_name, description, condition, price, type } =
+    req.body;
+  if (
+    !seller_id ||
+    !item_name ||
+    !description ||
+    !condition ||
+    !type ||
+    !price
+  ) {
     return res.status(404).json({ message: "All fields are required" });
   }
   try {
@@ -19,6 +27,7 @@ const addItem = async (req, res) => {
       description,
       condition,
       price,
+      type,
     });
 
     await item.save();
@@ -30,7 +39,19 @@ const addItem = async (req, res) => {
 };
 
 const removeItem = async (req, res) => {
+  const { item_id } = req.body;
+  if (!item_id) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
   try {
+    const item = await Products.findOne({ _id: item_id });
+    if (!item) {
+      return res.status(404).json({ message: "item not find" });
+    }
+
+    await Products.deleteOne({ _id: item_id });
+
+    res.status(200).json({ message: "Item removed" });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: "Server Error" });
