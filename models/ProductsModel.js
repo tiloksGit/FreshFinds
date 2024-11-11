@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 
 const ProductsModel = mongoose.Schema({
   seller_id: { type: mongoose.Types.ObjectId, ref: "User" },
-  type: {
-    type: Number,
+  category: {
+    type: String,
     required: true,
   },
   item_name: {

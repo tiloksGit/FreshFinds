@@ -21,23 +21,28 @@ const updateAddress = async (req, res) => {
 };
 
 const deleteUser = async (req, res) => {
-  const { id, role } = req.body;
+  const { id, role } = req.query;
   if (!id || !role) {
     return res.status(400).json({ message: "address field required" });
   }
   try {
+    console.log(id, role);
     const user = await User.findOne({ _id: id });
-    if (!user || user.role != role) {
+    if (!user || !(user.role == role || user.role == "buyer+seller")) {
       return res
         .status(404)
         .json({ message: "user with the specified role not found" });
     }
+
     await User.deleteOne({ _id: id });
-    if (role == "seller" || role == "Seller") {
+
+    if (
+      (user.role = "seller" || user.role == "buyer+seller") &&
+      role == "seller"
+    ) {
       const seller = await Seller.findOne({ user_id: id });
-      const it = await Seller.deleteOne({ user_id: id });
-      console.log(it);
-      Product.deleteMany({ seller_id: seller._id });
+      await Seller.deleteOne({ user_id: id });
+      await Product.deleteMany({ seller_id: seller.user_id });
     } else if (role == "buyer" || role == "Buyer") {
       const buyer = await Buyer.findOne({ user_id: id });
       await Cart.deleteMany({ user_id: buyer._id });

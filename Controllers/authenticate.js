@@ -23,7 +23,11 @@ const authenticateUser = async (req, res) => {
     });
     res
       .status(200)
-      .json({ accessToken: token, message: "user succesfully logged in" });
+      .json({
+        accessToken: token,
+        user,
+        message: "user succesfully logged in",
+      });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: " Server Error" });

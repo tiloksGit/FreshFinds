@@ -48,10 +48,11 @@ const Signup = async (req, res) => {
       if (duplicateBuyer) {
         dupB = true;
       }
-      console.log("buyer", duplicateBuyer);
+      console.log(dupS);
+      console.log(dupB);
     }
     if ((dupS && role == "seller") || (dupB && role == "buyer")) {
-      return res.status(409).json({ message: "User role already exists" });
+      return res.status(409).json({ message: "User role already exist" });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     if (!duplicateUser) {
@@ -109,6 +110,9 @@ const Signup = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Registration failed" });
+  } finally {
+    dupS = false;
+    dupB = false;
   }
 };
 

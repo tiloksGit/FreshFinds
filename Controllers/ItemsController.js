@@ -1,22 +1,34 @@
+const ProductsModel = require("../models/ProductsModel");
 const Products = require("../models/ProductsModel");
 const Seller = require("../models/SellerModel");
 
-//Buyer Controls
+//all users controls
+
+const getAllProducts = async (req, res) => {
+  try {
+    const item = await ProductsModel.find();
+    return res.status(200).json({ success: true, items: item });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "Server Error" });
+  }
+};
+//Seller Controls
 const addItem = async (req, res) => {
-  const { seller_id, item_name, description, condition, price, type } =
+  const { seller_id, item_name, description, condition, price, category } =
     req.body;
   if (
     !seller_id ||
     !item_name ||
     !description ||
     !condition ||
-    !type ||
+    !category ||
     !price
   ) {
     return res.status(404).json({ message: "All fields are required" });
   }
   try {
-    sellerMatch = await Seller.findOne({ seller_id });
+    sellerMatch = await Seller.findOne({ user_id: seller_id });
     if (!sellerMatch) {
       return res.status(404).json({ message: "Seller not found" });
     }
@@ -27,9 +39,14 @@ const addItem = async (req, res) => {
       description,
       condition,
       price,
-      type,
+      category,
     });
 
+    await Seller.findOneAndUpdate(
+      { user_id: seller_id },
+      { $set: { item_counts: sellerMatch.item_counts + 1 } },
+      { new: false }
+    );
     await item.save();
     return res.status(201).json({ message: "Product added" });
   } catch (err) {
@@ -39,7 +56,8 @@ const addItem = async (req, res) => {
 };
 
 const removeItem = async (req, res) => {
-  const { item_id } = req.body;
+  const item_id = req.query.id;
+  console.log(item_id);
   if (!item_id) {
     return res.status(400).json({ message: "All fields are required" });
   }
@@ -66,7 +84,7 @@ const updateItem = async (req, res) => {
   }
 };
 
-//User Item Controls
+//Buyer Item Controls
 
 const showInterest = async (req, res) => {
   try {
@@ -90,4 +108,5 @@ module.exports = {
   updateItem,
   showInterest,
   revokeInterest,
+  getAllProducts,
 };
