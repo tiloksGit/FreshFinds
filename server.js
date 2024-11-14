@@ -4,6 +4,13 @@ const connectDB = require("./config/dbconfig");
 const express = require("express");
 const verifyLogin = require("./middleware/authenticateMiddleware");
 const app = express();
+const cors = require("cors");
+
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -24,7 +31,7 @@ app.use("/api/v0/protected", verifyLogin, require("./Routes/protectedRoute"));
 app.use("/api/v0/open", require("./Routes/openRoute"));
 mongoose.connection.once("open", () => {
   console.log("Connected to mongoDB");
-  app.listen(3000, () => {
+  app.listen(3001, () => {
     console.log(`server listening on port ${3000}`);
   });
 });
