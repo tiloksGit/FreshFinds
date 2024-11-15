@@ -15,15 +15,23 @@ const getAllProducts = async (req, res) => {
 };
 //Seller Controls
 const addItem = async (req, res) => {
-  const { seller_id, item_name, description, condition, price, category } =
-    req.body;
+  const {
+    seller_id,
+    item_name,
+    description,
+    condition,
+    price,
+    category,
+    item_age,
+  } = req.body;
   if (
     !seller_id ||
     !item_name ||
     !description ||
     !condition ||
     !category ||
-    !price
+    !price ||
+    !item_age
   ) {
     return res.status(404).json({ message: "All fields are required" });
   }
@@ -32,14 +40,16 @@ const addItem = async (req, res) => {
     if (!sellerMatch) {
       return res.status(404).json({ message: "Seller not found" });
     }
-
+    const image_urls = req.files.map((file) => file.location);
     const item = new Products({
       seller_id,
       item_name,
+      item_age,
       description,
       condition,
       price,
       category,
+      image_urls,
     });
 
     await Seller.findOneAndUpdate(

@@ -10,9 +10,15 @@ const ProductsModel = mongoose.Schema({
     type: String,
     required: true,
   },
+  image_urls: {
+    type: [String],
+  },
   description: {
     type: String,
     required: true,
+  },
+  item_age: {
+    type: Number,
   },
   condition: {
     type: String,

@@ -1,11 +1,24 @@
 const router = require("express").Router();
 const ItemController = require("../Controllers/ItemsController");
 const UserController = require("../Controllers/UserController");
+const ReviewController = require("../Controllers/reviewController");
+const upload = require("../config/multerConfig");
+
 router.get("/", (req, res) => {
   res.status(200).json({ message: "Ok you are logged in" });
 });
 
-router.post("/add-product", ItemController.addItem);
+/*Product endpoints*/
+router.post("/add-product", upload.array("images", 10), ItemController.addItem);
 router.delete("/remove-product", ItemController.removeItem);
+
+/*User endpoints*/
+
 router.delete("/remove-user", UserController.deleteUser);
+
+/*Review endpoints*/
+
+router.post("/review/add", ReviewController.addReview);
+router.delete("/review/remove", ReviewController.deleteReview);
+router.patch("/review/update", ReviewController.updateReview);
 module.exports = router;
