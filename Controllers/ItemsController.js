@@ -38,7 +38,7 @@ const addItem = async (req, res) => {
   try {
     sellerMatch = await Seller.findOne({ user_id: seller_id });
     if (!sellerMatch) {
-      return res.status(404).json({ message: "Seller not found" });
+      return res.status(400).json({ message: "Seller not found" });
     }
     const image_urls = req.files.map((file) => file.location);
     const item = new Products({
