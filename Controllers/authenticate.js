@@ -21,13 +21,11 @@ const authenticateUser = async (req, res) => {
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET_KEY, {
       expiresIn: "30min",
     });
-    res
-      .status(200)
-      .json({
-        accessToken: token,
-        user,
-        message: "user succesfully logged in",
-      });
+    res.status(200).json({
+      accessToken: token,
+      user: { user_id: user._id, name: user.name, role: user.role },
+      message: "user succesfully logged in",
+    });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: " Server Error" });

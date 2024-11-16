@@ -14,6 +14,7 @@ router.delete("/remove-product", ItemController.removeItem);
 
 /*User endpoints*/
 
+router.post("/get-user-complete", UserController.getCompleteUserDetails);
 router.delete("/remove-user", UserController.deleteUser);
 
 /*Review endpoints*/
@@ -21,4 +22,9 @@ router.delete("/remove-user", UserController.deleteUser);
 router.post("/review/add", ReviewController.addReview);
 router.delete("/review/remove", ReviewController.deleteReview);
 router.patch("/review/update", ReviewController.updateReview);
+
+/*Cart endpoints*/
+router.post("/add-to-cart", ItemController.showInterest);
+router.delete("/rmfcart", ItemController.revokeInterest);
+
 module.exports = router;

@@ -3,7 +3,11 @@ const mongoose = require("mongoose");
 const CartModel = mongoose.Schema({
   buyer_id: {
     type: mongoose.Types.ObjectId,
-    ref: "Buyer",
+    ref: "Users",
+  },
+  seller_id: {
+    type: mongoose.Types.ObjectId,
+    ref: "Users",
   },
   item_id: {
     type: mongoose.Types.ObjectId,
