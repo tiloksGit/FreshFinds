@@ -3,7 +3,7 @@ const Cart = require("../models/Cart");
 const ProductsModel = require("../models/ProductsModel");
 const Products = require("../models/ProductsModel");
 const Seller = require("../models/SellerModel");
-
+const mailSender = require("../middleware/sendGridMail");
 //all users controls
 
 const getAllProducts = async (req, res) => {
@@ -165,12 +165,12 @@ const revokeInterest = async (req, res) => {
 
 const getProductRequests = async (req, res) => {
   const { _id, role } = req.query;
-  if (_id?.length || role) {
+  if (!_id?.length || !role) {
     return res.status(400).json({ success: false, message: "id not found" });
   }
-  const idt = `${role}_id`;
+
   try {
-    const cart_requests = await Cart.find({ idt: _id });
+    const cart_requests = await Cart.find({ [`${role}_id`]: _id });
     res.status(200).json({ success: true, cart_requests });
   } catch (err) {
     console.log(err);
@@ -186,15 +186,110 @@ const approveRequest = async (req, res) => {
       .json({ success: false, message: "All fields are required" });
   }
   try {
-    await Seller.findOneAndUpdate(
-      { cart_id },
-      { $set: { approved: !approved } },
+    const cartItem = await Cart.findOne({ _id: cart_id });
+    if (!cartItem) {
+      return res
+        .status(400)
+        .json({ success: false, message: "item not found in cart" });
+    }
+    const customer = await User.findOne({ _id: Cart.buyer_id });
+    await Cart.findOneAndUpdate(
+      { _id: cart_id },
+      { $set: { approved: !cartItem.approved } },
       { new: false }
     );
+    const mailText = {
+      to: customer.email, // Recipient's email
+      from: "freshfinds860@gmail.com", // Your verified sender email
+      subject: subject,
+      html: `<!DOCTYPE html>
+ <html lang="en">
+ <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Email Verification</title>
+     <style>
+         body {
+             font-family: Arial, sans-serif;
+             margin: 0;
+             padding: 0;
+             background-color: #f9f9f9;
+             color: #333;
+         }
+         .container {
+             max-width: 600px;
+             margin: 20px auto;
+             background-color: #ffffff;
+             border-radius: 8px;
+             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+             padding: 20px;
+         }
+         .header {
+             text-align: center;
+             background-color: #4CAF50;
+             padding: 10px 0;
+             border-radius: 8px 8px 0 0;
+             color: #fff;
+         }
+         .header h1 {
+             margin: 0;
+             font-size: 24px;
+         }
+         .content {
+             text-align: center;
+             padding: 20px;
+         }
+         .code {
+             font-size: 32px;
+             font-weight: bold;
+             color: #4CAF50;
+             margin: 20px 0;
+         }
+         .footer {
+             text-align: center;
+             font-size: 12px;
+             color: #666;
+             margin-top: 20px;
+             border-top: 1px solid #eee;
+             padding-top: 10px;
+         }
+         .footer a {
+             color: #4CAF50;
+             text-decoration: none;
+         }
+     </style>
+ </head>
+ <body>
+     <div class="container">
+         <!-- Header -->
+         <div class="header">
+             <h1>Welcome to FreshFinds!</h1>
+         </div>
+ 
+         <!-- Main Content -->
+         <div class="content">
+             <p>Hi there,</p>
+             <p>Thank you for signing up with FreshFinds! Please verify your email address by using the 4-digit verification code below:</p>
+             <div class="code">${randomNumber}</div> <!-- Correctly interpolating the value here -->
+             <p>This code will expire in 10 minutes. If you didn’t request this verification, please ignore this email.</p>
+         </div>
+ 
+         <!-- Footer -->
+         <div class="footer">
+             <p>If you have any questions, contact us at <a href="mailto:support@freshfinds.com">support@freshfinds.com</a>.</p>
+             <p>&copy; 2024 FreshFinds. All rights reserved.</p>
+         </div>
+     </div>
+ </body>
+ </html>`,
+    };
+    if (!cartItem.approved) {
+      const mailSuccess = await mailSender(mailText);
+    }
     res.status(201).json({ success: true });
   } catch (err) {
     console.log(err);
-    res.status(500);
+    res.status(500).json({ message: "Server Error" });
   }
 };
 
