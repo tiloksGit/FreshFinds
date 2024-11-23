@@ -89,7 +89,7 @@ const updateAddress = async (req, res) => {
 const deleteUser = async (req, res) => {
   const { id, role } = req.query;
   if (!id || !role) {
-    return res.status(400).json({ message: "address field required" });
+    return res.status(400).json({ message: "all field required" });
   }
   try {
     console.log(id, role);

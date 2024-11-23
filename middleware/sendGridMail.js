@@ -81,7 +81,7 @@ const mailChecker = async (email, randomNumber) => {
             <p>Hi there,</p>
             <p>Thank you for signing up with FreshFinds! Please verify your email address by using the 4-digit verification code below:</p>
             <div class="code">${randomNumber}</div> <!-- Correctly interpolating the value here -->
-            <p>This code will expire in 15 minutes. If you didn’t request this verification, please ignore this email.</p>
+            <p>This code will expire in 10 minutes. If you didn’t request this verification, please ignore this email.</p>
         </div>
 
         <!-- Footer -->

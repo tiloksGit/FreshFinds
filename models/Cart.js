@@ -13,6 +13,10 @@ const CartModel = mongoose.Schema({
     type: mongoose.Types.ObjectId,
     ref: "Product",
   },
+  approved: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 module.exports = mongoose.model("Cart", CartModel);

@@ -24,6 +24,8 @@ router.delete("/review/remove", ReviewController.deleteReview);
 router.patch("/review/update", ReviewController.updateReview);
 
 /*Cart endpoints*/
+router.get("/get-products-requests", ItemController.getProductRequests);
+router.patch("/change_request_status", ItemController.approveRequest);
 router.post("/add-to-cart", ItemController.showInterest);
 router.delete("/rmfcart", ItemController.revokeInterest);
 

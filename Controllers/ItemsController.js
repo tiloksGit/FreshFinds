@@ -28,8 +28,8 @@ const addItem = async (req, res) => {
     item_age,
   } = req.body;
   if (
-    !seller_id ||
-    !item_name ||
+    !seller_id?.length ||
+    !item_name?.length ||
     !description ||
     !condition ||
     !category ||
@@ -163,6 +163,41 @@ const revokeInterest = async (req, res) => {
   }
 };
 
+const getProductRequests = async (req, res) => {
+  const { _id, role } = req.query;
+  if (_id?.length || role) {
+    return res.status(400).json({ success: false, message: "id not found" });
+  }
+  const idt = `${role}_id`;
+  try {
+    const cart_requests = await Cart.find({ idt: _id });
+    res.status(200).json({ success: true, cart_requests });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ success: false, message: "server error" });
+  }
+};
+
+const approveRequest = async (req, res) => {
+  const { cart_id } = req.query;
+  if (!cart_id?.length) {
+    return res
+      .status(400)
+      .json({ success: false, message: "All fields are required" });
+  }
+  try {
+    await Seller.findOneAndUpdate(
+      { cart_id },
+      { $set: { approved: !approved } },
+      { new: false }
+    );
+    res.status(201).json({ success: true });
+  } catch (err) {
+    console.log(err);
+    res.status(500);
+  }
+};
+
 module.exports = {
   addItem,
   removeItem,
@@ -170,4 +205,6 @@ module.exports = {
   showInterest,
   revokeInterest,
   getAllProducts,
+  getProductRequests,
+  approveRequest,
 };
