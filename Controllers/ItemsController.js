@@ -99,7 +99,26 @@ const updateItem = async (req, res) => {
 };
 
 //Buyer Item Controls
-
+const getItembyId = async (req, res) => {
+  const { _id } = req.query;
+  if (!_id) {
+    return res
+      .status(400)
+      .json({ success: false, message: "All fields are required" });
+  }
+  try {
+    const item = await Products.findOne({ _id });
+    if (!item) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Item not found" });
+    }
+    res.status(200).json({ success: true, item });
+  } catch (err) {
+    console.log(er);
+    res.status(500).json({ success: false, message: "server error" });
+  }
+};
 const showInterest = async (req, res) => {
   const { seller_id, buyer_id, item_id } = req.body;
   if (!seller_id || !buyer_id || !item_id) {
@@ -356,4 +375,5 @@ module.exports = {
   getAllProducts,
   getProductRequests,
   approveRequest,
+  getItembyId,
 };

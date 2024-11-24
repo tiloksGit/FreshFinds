@@ -11,6 +11,7 @@ router.get("/", (req, res) => {
 /*Product endpoints*/
 router.post("/add-product", upload.array("images", 10), ItemController.addItem);
 router.delete("/remove-product", ItemController.removeItem);
+router.get("/get-item", ItemController.getItembyId);
 
 /*User endpoints*/
 
