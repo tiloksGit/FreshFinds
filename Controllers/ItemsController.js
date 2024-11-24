@@ -120,8 +120,8 @@ const getItembyId = async (req, res) => {
   }
 };
 const showInterest = async (req, res) => {
-  const { seller_id, buyer_id, item_id } = req.body;
-  if (!seller_id || !buyer_id || !item_id) {
+  const { seller_id, buyer_id, item_id, item_name, comment } = req.body;
+  if (!seller_id || !buyer_id || !item_id || !comment || !item_name) {
     return res
       .status(400)
       .json({ success: false, message: "All fields are required" });
@@ -148,6 +148,8 @@ const showInterest = async (req, res) => {
       seller_id,
       buyer_id,
       item_id,
+      item_name,
+      comment,
     });
 
     newCartItem.save();

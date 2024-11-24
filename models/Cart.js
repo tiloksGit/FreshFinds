@@ -13,9 +13,16 @@ const CartModel = mongoose.Schema({
     type: mongoose.Types.ObjectId,
     ref: "Product",
   },
+  item_name: {
+    type: String,
+    required: true,
+  },
   approved: {
     type: Boolean,
     default: false,
+  },
+  comment: {
+    type: String,
   },
 });
 
