@@ -62,7 +62,7 @@ const Signup = async (req, res) => {
     const mailText = {
       to: email, // Recipient's email
       from: "freshfinds860@gmail.com", // Your verified sender email
-      subject: subject,
+      subject: "Fresh Finds Mail verification",
       html: `<!DOCTYPE html>
  <html lang="en">
  <head>
