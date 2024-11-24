@@ -4,6 +4,7 @@ const ProductsModel = require("../models/ProductsModel");
 const Products = require("../models/ProductsModel");
 const Seller = require("../models/SellerModel");
 const mailSender = require("../middleware/sendGridMail");
+const User = require("../models/userModel");
 //all users controls
 
 const getAllProducts = async (req, res) => {
@@ -123,6 +124,7 @@ const showInterest = async (req, res) => {
         .status(301)
         .json({ success: false, message: "Duplicate entry" });
     }
+    const Recipient = await User.findOne({ _id: seller.user_id });
     const newCartItem = new Cart({
       seller_id,
       buyer_id,
@@ -130,6 +132,75 @@ const showInterest = async (req, res) => {
     });
 
     newCartItem.save();
+    const appUrl = "efsadfjl.cmom";
+    const mailText = {
+      to: Recipient.email, // Recipient's email
+      from: "freshfinds860@gmail.com", // Your verified sender email
+      subject: "Fresh Finds updates",
+      html: `<!DOCTYPE html>
+    <html>
+    <head>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                color: #333;
+            }
+            .container {
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 20px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                background-color: #f9f9f9;
+            }
+            h1 {
+                color: #4CAF50;
+            }
+            .button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 20px 0;
+                background-color: #4CAF50;
+                color: white;
+                text-decoration: none;
+                border-radius: 5px;
+                font-weight: bold;
+            }
+            .footer {
+                font-size: 0.9em;
+                color: #555;
+                margin-top: 20px;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Great News! 🎉</h1>
+            <p>Dear <strong>${Recipient.name}</strong>,</p>
+            <p>We’re thrilled to share some exciting news—someone has shown interest in your product, <strong>${item.item_name}</strong>, listed on <em>Fresh Finds</em>!</p>
+            <p>Here’s how you can make the most of this opportunity:</p>
+            <ul>
+                <li><strong>Connect with the Buyer:</strong> Log in to the app to check their message or contact details.</li>
+                <li><strong>Keep Your Listing Updated:</strong> Confirm the product details and availability to ensure smooth communication.</li>
+                <li><strong>Respond Quickly:</strong> Buyers love prompt responses—it’s the key to a successful sale!</li>
+            </ul>
+            <a href= "${appUrl} class="button">Log In to Fresh Finds</a>
+            <p>Thank you for choosing Fresh Finds to showcase your product. 
+            <p>Wishing you a successful sale!</p>
+            <p>Warm regards,<br>
+            <strong>The Fresh Finds Team</strong></p>
+            <div class="footer">
+                <p>&copy; 2024 Fresh Finds. All rights reserved.</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    `,
+    };
+    const mailSuccess = await mailSender(mailText);
+    console.log(mailSuccess);
     res
       .status(200)
       .json({ success: true, message: "Succesfully added to cart" });
@@ -192,99 +263,82 @@ const approveRequest = async (req, res) => {
         .status(400)
         .json({ success: false, message: "item not found in cart" });
     }
-    const customer = await User.findOne({ _id: Cart.buyer_id });
+    const product = await Products.findOne({ _id: cartItem.item_id });
+    const customer = await User.findOne({ _id: cartItem.buyer_id });
     await Cart.findOneAndUpdate(
       { _id: cart_id },
       { $set: { approved: !cartItem.approved } },
       { new: false }
     );
+
+    const appUrl = "efsadfjl.cmom";
     const mailText = {
       to: customer.email, // Recipient's email
       from: "freshfinds860@gmail.com", // Your verified sender email
-      subject: subject,
+      subject: "Fresh Finds updates",
       html: `<!DOCTYPE html>
- <html lang="en">
- <head>
-     <meta charset="UTF-8">
-     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <title>Email Verification</title>
-     <style>
-         body {
-             font-family: Arial, sans-serif;
-             margin: 0;
-             padding: 0;
-             background-color: #f9f9f9;
-             color: #333;
-         }
-         .container {
-             max-width: 600px;
-             margin: 20px auto;
-             background-color: #ffffff;
-             border-radius: 8px;
-             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-             padding: 20px;
-         }
-         .header {
-             text-align: center;
-             background-color: #4CAF50;
-             padding: 10px 0;
-             border-radius: 8px 8px 0 0;
-             color: #fff;
-         }
-         .header h1 {
-             margin: 0;
-             font-size: 24px;
-         }
-         .content {
-             text-align: center;
-             padding: 20px;
-         }
-         .code {
-             font-size: 32px;
-             font-weight: bold;
-             color: #4CAF50;
-             margin: 20px 0;
-         }
-         .footer {
-             text-align: center;
-             font-size: 12px;
-             color: #666;
-             margin-top: 20px;
-             border-top: 1px solid #eee;
-             padding-top: 10px;
-         }
-         .footer a {
-             color: #4CAF50;
-             text-decoration: none;
-         }
-     </style>
- </head>
- <body>
-     <div class="container">
-         <!-- Header -->
-         <div class="header">
-             <h1>Welcome to FreshFinds!</h1>
-         </div>
- 
-         <!-- Main Content -->
-         <div class="content">
-             <p>Hi there,</p>
-             <p>Thank you for signing up with FreshFinds! Please verify your email address by using the 4-digit verification code below:</p>
-             <div class="code">${randomNumber}</div> <!-- Correctly interpolating the value here -->
-             <p>This code will expire in 10 minutes. If you didn’t request this verification, please ignore this email.</p>
-         </div>
- 
-         <!-- Footer -->
-         <div class="footer">
-             <p>If you have any questions, contact us at <a href="mailto:support@freshfinds.com">support@freshfinds.com</a>.</p>
-             <p>&copy; 2024 FreshFinds. All rights reserved.</p>
-         </div>
-     </div>
- </body>
- </html>`,
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            color: #4CAF50;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 20px 0;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .footer {
+            font-size: 0.9em;
+            color: #555;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Good News! 🎉</h1>
+        <p>Dear <strong>${customer.name}</strong>,</p>
+        <p>We’re excited to inform you that your request for <strong>${product.item_name}</strong> has been accepted by the seller on <em>Fresh Finds</em>!</p>
+        <p>What’s next?</p>
+        <ul>
+            <li><strong>Contact the Seller:</strong> Log in to the app to view the seller’s message or contact details.</li>
+            <li><strong>Finalize the Details:</strong> Confirm payment, delivery, or pickup arrangements with the seller.</li>
+        </ul>
+        <a href=${appUrl} class="button">Log In to Fresh Finds</a>
+        <p>Thank you for using Fresh Finds! If you have any questions or need assistance</p> <p>We wish you a seamless and successful transaction!</p>
+        <p>Warm regards,<br>
+        <strong>The Fresh Finds Team</strong></p>
+        <div class="footer">
+            <p>&copy; 2024 Fresh Finds. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
+`,
     };
     if (!cartItem.approved) {
       const mailSuccess = await mailSender(mailText);
+      console.log(mailSuccess);
     }
     res.status(201).json({ success: true });
   } catch (err) {
