@@ -2,7 +2,7 @@ const User = require("../models/userModel")
 
 const getAllUser = async(req,res) => {
     const {_id} = req.body
-    if(!role || role!="admin"){
+    if(!_id ){
         return res.status(400).json({success: false, message: "All fields are required"})
     }
     try{
