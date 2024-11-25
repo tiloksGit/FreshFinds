@@ -1,8 +1,8 @@
 const User = require("../models/userModel")
 
 const getAllUser = async(req,res) => {
-    const {_id} = req.body
-    if(!_id){
+    const {role} = req.body
+    if(!role || role!="admin"){
         return res.status(400).json({success: false, message: "All fields are required"})
     }
     try{
@@ -10,6 +10,7 @@ const getAllUser = async(req,res) => {
     if(!user){
         return res.status(400).json({success: false, message: "No user found"})
     }
+
 
     res.status(200).json({success: true, user})
     }catch(err){
