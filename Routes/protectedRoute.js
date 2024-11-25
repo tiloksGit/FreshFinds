@@ -3,6 +3,7 @@ const ItemController = require("../Controllers/ItemsController");
 const UserController = require("../Controllers/UserController");
 const ReviewController = require("../Controllers/reviewController");
 const upload = require("../config/multerConfig");
+const Admin = require("../Controllers/adminController")
 
 router.get("/", (req, res) => {
   res.status(200).json({ message: "Ok you are logged in" });
@@ -30,4 +31,7 @@ router.patch("/change_request_status", ItemController.approveRequest);
 router.post("/add-to-cart", ItemController.showInterest);
 router.delete("/rmfcart", ItemController.revokeInterest);
 
+/*Admin endpoints*/
+
+router.post("/getallusers", Admin.getAllUser)
 module.exports = router;
