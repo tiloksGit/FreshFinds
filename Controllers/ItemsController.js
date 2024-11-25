@@ -288,11 +288,11 @@ const approveRequest = async (req, res) => {
     const customer = await User.findOne({ _id: cartItem.buyer_id });
     await Cart.findOneAndUpdate(
       { _id: cart_id },
-      { $set: { approved: false } },
+      { $set: { approved: !cartItem.approved } },
       { new: false }
     );
 
-    const appUrl = "http://13.54.149.207:3000/";
+    const appUrl = "efsadfjl.cmom";
     const mailText = {
       to: customer.email, // Recipient's email
       from: "freshfinds860@gmail.com", // Your verified sender email
@@ -358,11 +358,6 @@ const approveRequest = async (req, res) => {
 `,
     };
     if (!cartItem.approved) {
-      await Products.findOneAndUpdate(
-        { _id: product._id },
-        { $set: { isListed: false } },
-        { new: false }
-      );
       const mailSuccess = await mailSender(mailText);
       console.log(mailSuccess);
     }
